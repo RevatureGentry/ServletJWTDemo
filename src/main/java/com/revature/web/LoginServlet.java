@@ -8,6 +8,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.revature.service.LoginService;
 import com.revature.service.LoginServiceImpl;
@@ -17,6 +20,7 @@ public class LoginServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private LoginService service;
 	private ObjectMapper mapper;
+	private final Logger logger = LogManager.getLogger(getClass());
 	 
 	
 	@Override
@@ -26,6 +30,7 @@ public class LoginServlet extends HttpServlet {
 	}
        
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		logger.info("Inside LoginServlet");
 		response.setContentType("application/json");
 		String token = service.attemptAuthentication(request, response);
 		if (token == null) {
@@ -33,7 +38,7 @@ public class LoginServlet extends HttpServlet {
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			return;
 		}
-		response.addHeader("Authorization", "Bearer " + token);
+		response.getOutputStream().write(mapper.writeValueAsBytes(Collections.singletonMap("token", "Bearer " +token)));
 	}
 
 }

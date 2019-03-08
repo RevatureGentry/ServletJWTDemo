@@ -66,6 +66,7 @@ public class TokenServiceImpl implements TokenService {
 			throw new IllegalArgumentException("User details must not be null");
 		final Date now = new Date();
 		final String jti = UUID.randomUUID().toString();
+		logger.info("Generating JWT for {}", details.getUsername());
 		return Jwts.builder().signWith(keyPair.getPrivate(), SignatureAlgorithm.RS256)
 				   .setSubject(details.getUsername())
 				   .claim("email", details.getEmail())
